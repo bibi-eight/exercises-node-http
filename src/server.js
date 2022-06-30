@@ -8,3 +8,34 @@
 
   OBS: Deve ser utilizado apenas os módulos nativos do NODE (http, path, fs, etc), nada de instalar outras libs ( ˘︹˘ )
 */
+const fs = require('fs');
+const path = require('path');
+const http = require('http');
+const url = require('url');
+const port = 8000;
+const host = "localhost";
+const dir = path.resolve(__dirname, "pages");
+
+const server = http.createServer((request, response)=> {
+  const myUrl = request.url;
+  const param = url.parse(myUrl).path;
+  let page = "";
+  let status = 0;
+
+  if(param === "/about"){
+    page = fs.readFileSync(dir + '/about.html', "utf-8");
+    status = 200;
+  }
+  else if(param === "/home" || param === "/"){
+    page = fs.readFileSync(dir + '/index.html', 'utf-8');
+    status = 200;
+  } else {
+    page = fs.readFileSync(dir + '/404.html', "utf-8");
+    status = 404;
+  }
+
+  response.writeHead(status);
+  response.end(page);
+
+});
+server.listen(port, host);
